@@ -12,3 +12,4 @@ As a user, I want to be able to...
 - View a list of the top 100 games from the past 2 weeks on Steam.
 - View market predictions based on titles coming to the platform.
 - Visualize all of this information through a clean and easy-to-read user interface.
+- Refresh this information through the website so that I know I'm getting up-to-the-minute data.
