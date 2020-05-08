@@ -4,6 +4,7 @@ As a user, I want to be able to...
 
 - View the most popular games on Steam.
 - View the most played games on Steam.
+- View the most popular developers.
 - View which genres are lacking game titles at the moment.
 - View which genres have an over-saturation of game titles.
 - View sales approximations for games.
