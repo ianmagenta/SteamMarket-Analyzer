@@ -18,7 +18,7 @@
 - "/search/:appId"
   - Displays statistics about a specific game.
 - "/about"
-  - Site explanation, personal info, and github link.
+  - Site explanation, personal info, and github link
 
 <!-- # Endpoints v1
 
