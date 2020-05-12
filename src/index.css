@@ -1,1 +1,15 @@
-/* TODO Add site wide styles */
+/* nothing to see here */
+@font-face {
+  font-family: "D-DIN-Bold";
+  src: url("./fonts/D-DIN-Bold.ttf");
+}
+
+@font-face {
+  font-family: "D-DIN";
+  src: url("./fonts/D-DIN.ttf");
+}
+
+/* @font-face {
+  font-family: "D-DIN-Bold";
+  src: url("./fonts/D-DIN.ttf");
+} */

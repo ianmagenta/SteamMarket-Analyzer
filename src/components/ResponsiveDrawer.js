@@ -6,18 +6,24 @@ import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import MailIcon from "@material-ui/icons/Mail";
 import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, useTheme, fade } from "@material-ui/core/styles";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
+import "../index.css";
+import logo from "../images/SMA-logo2.svg";
+import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
+import { Link, Route } from "react-router-dom";
+import TimelineIcon from "@material-ui/icons/Timeline";
+import BarChartIcon from "@material-ui/icons/BarChart";
+import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
+import { useHistory } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -25,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
   },
+  border: "none",
   drawer: {
     [theme.breakpoints.up("sm")]: {
       width: drawerWidth,
@@ -32,10 +39,15 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   appBar: {
+    "background-color": "#1d1d1d",
     [theme.breakpoints.up("sm")]: {
+      // alignItems: "center",
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
+      "border-bottom": "1.1px solid rgba(255, 255, 255, 0.12)",
+      "background-color": "#1d1d1d",
     },
+    carl: 10,
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -47,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
   toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: drawerWidth,
+    "border-right": "none",
   },
   content: {
     flexGrow: 1,
@@ -87,11 +100,43 @@ const useStyles = makeStyles((theme) => ({
     height: "56px",
     [theme.breakpoints.up("sm")]: {
       height: "64px",
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
+      width: "100%",
+    },
+  },
+  logo: {
+    margin: "0 -12px 0 16px",
+    height: "56px",
+    width: "56px",
+    [theme.breakpoints.up("sm")]: {
+      height: "64px",
+      width: "64px",
+    },
+  },
+  titleText: {
+    "font-family": "D-DIN",
+    "font-size": "xx-large",
+    "&::before": {
+      content: '"SMA"',
+    },
+    [theme.breakpoints.up("sm")]: {
+      "font-family": "D-DIN",
+      "font-size": "xx-large",
+      "&::before": {
+        content: '"Steam Market Analyzer"',
       },
     },
+  },
+  selectDot: {
+    justifyContent: "center",
+  },
+  dot: {
+    fontSize: "small",
+  },
+  titleDiv: {
+    display: "flex",
+    flexGrow: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 }));
 
@@ -100,9 +145,22 @@ function ResponsiveDrawer(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const history = useHistory();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (mobileOpen) {
+        setMobileOpen(false);
+      }
+      history.push(`/search/${e.target.value}`);
+      e.target.value = "";
+      e.target.blur();
+    }
   };
 
   const drawer = (
@@ -113,6 +171,7 @@ function ResponsiveDrawer(props) {
             <SearchIcon />
           </div>
           <InputBase
+            onKeyDown={handleKeyDown}
             placeholder="Search…"
             classes={{
               root: classes.inputRoot,
@@ -124,18 +183,23 @@ function ResponsiveDrawer(props) {
       </div>
       <Divider />
       <List style={{ padding: "0px" }}>
-        {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+        {["Snapshot", "Analysis", "About"].map((text, index) => (
+          <ListItem component={Link} to={`/${text.toLowerCase()}`} button key={text}>
+            <ListItemIcon>
+              {text === "Snapshot" ? (
+                <TimelineIcon />
+              ) : text === "Analysis" ? (
+                <BarChartIcon />
+              ) : text === "About" ? (
+                <InfoOutlinedIcon />
+              ) : null}
+            </ListItemIcon>
             <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-      <List>
-        {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
+            <ListItemIcon className={classes.selectDot}>
+              <Route exact path={`/${text.toLowerCase()}`}>
+                <FiberManualRecordIcon className={classes.dot} />
+              </Route>
+            </ListItemIcon>
           </ListItem>
         ))}
       </List>
@@ -150,6 +214,7 @@ function ResponsiveDrawer(props) {
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <IconButton
+            disableFocusRipple
             color="inherit"
             aria-label="open drawer"
             edge="start"
@@ -158,9 +223,10 @@ function ResponsiveDrawer(props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap>
-            Responsive drawer
-          </Typography>
+          <div className={classes.titleDiv}>
+            <Typography variant="h6" noWrap className={classes.titleText}></Typography>
+          </div>
+          <img src={logo} className={classes.logo} alt="logo" />
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">
