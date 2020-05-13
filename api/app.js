@@ -1,5 +1,5 @@
+const express = require("express");
 var createError = require("http-errors");
-var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
@@ -49,5 +49,8 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
+
+const port = process.env.PORT || 8000;
+app.listen(port);
 
 module.exports = app;
