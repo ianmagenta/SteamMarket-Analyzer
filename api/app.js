@@ -8,6 +8,9 @@ var apiRouter = require("./routes/api");
 
 var app = express();
 
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "/../build")));
+
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
@@ -24,6 +27,12 @@ app.use((req, res, next) => {
 });
 
 app.use("/api", apiRouter);
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/../build/index.html"));
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

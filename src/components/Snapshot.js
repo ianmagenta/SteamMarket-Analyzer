@@ -20,14 +20,12 @@ const useStyles = makeStyles((theme) => ({
 
 const getAll = async () => {
   try {
-    const response = await fetch("http://localhost:8000/api/top100in2weeks");
+    const response = await fetch("http://localhost:8000/api/appdetails&appid=730");
     if (!response.ok) {
       throw response;
     }
     const data = await response.json();
-    console.log(data[Object.keys(data)[0]]);
-    // const otherData = await JSON.parse(data);
-    // console.log(typeof otherData, otherData);
+    console.log(data);
   } catch (err) {
     console.log(err);
   }
