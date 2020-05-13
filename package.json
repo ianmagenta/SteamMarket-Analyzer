@@ -4,7 +4,7 @@
   "description": "Provides developer-focused statistics about the Steam storefront.",
   "main": "app.js",
   "scripts": {
-    "start": "node ./api/app.js",
+    "start": "node app.js",
     "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "repository": {
@@ -17,5 +17,16 @@
   "bugs": {
     "url": "https://github.com/ianmagenta/Steam-Market-Analyzer/issues"
   },
-  "homepage": "https://github.com/ianmagenta/Steam-Market-Analyzer#readme"
+  "homepage": "https://github.com/ianmagenta/Steam-Market-Analyzer#readme",
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "express": "*",
+    "body-parser": "*",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.1",
+    "node-fetch": "^2.6.0"
+  }
 }
