@@ -4,7 +4,7 @@
   "description": "Provides developer-focused statistics about the Steam storefront.",
   "main": "app.js",
   "scripts": {
-    "test": "node ./api/app.js",
+    "start": "node ./api/app.js",
     "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "repository": {
