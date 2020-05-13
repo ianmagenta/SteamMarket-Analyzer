@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 const getAll = async () => {
   try {
-    const response = await fetch("http://localhost:8000/api/appdetails&appid=730");
+    const response = await fetch("/api/appdetails&appid=730");
     if (!response.ok) {
       throw response;
     }
