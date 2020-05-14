@@ -124,7 +124,7 @@ const useStyles = makeStyles((theme) => ({
       "font-family": "D-DIN",
       "font-size": "xx-large",
       "&::before": {
-        content: '"Steam Market Analyzer"',
+        content: '"SteamMarket Analyzer"',
       },
     },
   },

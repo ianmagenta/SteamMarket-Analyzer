@@ -15,7 +15,7 @@ class App extends Component {
           },
         },
         xaxis: {
-          categories: this.props.categories,
+          type: this.props.xaxisFormat,
         },
         theme: {
           mode: "dark",
@@ -27,6 +27,11 @@ class App extends Component {
         stroke: {
           curve: "smooth",
         },
+        tooltip: {
+          x: {
+            format: this.props.tooltipFormat,
+          },
+        },
       },
       series: [
         {
@@ -35,6 +40,24 @@ class App extends Component {
         },
       ],
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.data !== this.props.data || prevProps.categories !== this.props.categories) {
+      this.setState({
+        series: [
+          {
+            name: this.props.name,
+            data: this.props.data,
+          },
+        ],
+        options: {
+          xaxis: {
+            type: this.props.xaxisFormat,
+          },
+        },
+      });
+    }
   }
 
   render() {

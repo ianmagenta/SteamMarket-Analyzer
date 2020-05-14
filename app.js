@@ -5,6 +5,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
 var apiRouter = require("./routes/api");
+const fetch = require("node-fetch");
 
 var app = express();
 
@@ -53,4 +54,15 @@ app.use(function (err, req, res, next) {
 const port = process.env.PORT || 8000;
 app.listen(port);
 
-module.exports = app;
+// setInterval(async () => {
+//   try {
+//     const response = await fetch("https://steamspy.com/api.php?request=top100in2weeks");
+//     if (!response.ok) {
+//       throw response;
+//     }
+//     const data = await response.json();
+//     for (let i = 0; i < Object.keys(data)){}
+//   } catch (err) {
+//     console.log(err);
+//   }
+// }, 2000);
