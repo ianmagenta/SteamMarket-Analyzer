@@ -19,7 +19,7 @@ class App extends Component {
         },
         theme: {
           mode: "dark",
-          palette: "palette10",
+          palette: this.props.pal,
         },
         dataLabels: {
           enabled: false,
@@ -53,6 +53,7 @@ class App extends Component {
         ],
         options: {
           xaxis: {
+            categories: this.props.categories,
             type: this.props.xaxisFormat,
           },
         },

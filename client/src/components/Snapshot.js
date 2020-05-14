@@ -9,6 +9,7 @@ import { Typography } from "@material-ui/core";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import CardActionArea from "@material-ui/core/CardActionArea";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,6 +48,10 @@ export default function Snapshot() {
     [1589236378000, 16950161],
   ]);
   const [top100, setTop100] = useState([570, 434170, 548430]);
+  const [popularGenres, setPopularGenres] = useState([1, 1, 1]);
+  const [popularGenresCat, setPopularGenresCat] = useState(["Action", "Adventure", "FPS"]);
+  const [popularTags, setPopularTags] = useState([0, 0, 0]);
+  const [popularTagsCat, setPopularTagsCat] = useState(["Action", "Adventure", "FPS"]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,6 +68,24 @@ export default function Snapshot() {
     };
 
     const fetchData2 = async () => {
+      function arrayAmount(arr1) {
+        var a = [],
+          b = [],
+          prev;
+
+        let arr = arr1.concat().sort();
+        for (var i = 0; i < arr.length; i++) {
+          if (arr[i] !== prev) {
+            a.push(arr[i]);
+            b.push(1);
+          } else {
+            b[b.length - 1]++;
+          }
+          prev = arr[i];
+        }
+        return [a, b];
+      }
+
       try {
         const response = await fetch("/api/text/top100in2weeks");
         if (!response.ok) {
@@ -74,6 +97,33 @@ export default function Snapshot() {
         const almostfinalData = numberData.map((item) => parseInt(item.match(/\d+/g)[0], 10));
         const finalData = almostfinalData.filter((item) => item > 550);
         setTop100(finalData);
+        const genreData = [];
+        const tagData = [];
+        for (let i = 0; i < finalData.length; i++) {
+          const res = await fetch(`/api/appdetails&appid=${finalData[i]}`);
+          const resData = await res.json();
+
+          // Genre Data
+          genreData.push(...resData.genre.split(",").map((item) => item.trim()));
+          const chartData = arrayAmount(genreData);
+          setPopularGenres(chartData[1]);
+          setPopularGenresCat(chartData[0]);
+
+          // Tag Data
+          tagData.push(...Object.keys(resData.tags));
+          const chartTagData = arrayAmount(tagData);
+          for (let j = 0; j < chartTagData[1].length; j++) {
+            if (chartTagData[1][j] < 20) {
+              chartTagData[1][j] = 0;
+              chartTagData[0][j] = "";
+            }
+          }
+          chartTagData[1] = chartTagData[1].filter((item) => item !== 0);
+          chartTagData[0] = chartTagData[0].filter((item) => item !== "");
+          console.log(chartTagData);
+          setPopularTags(chartTagData[1]);
+          setPopularTagsCat(chartTagData[0]);
+        }
       } catch (err) {
         console.log(err);
       }
@@ -88,44 +138,69 @@ export default function Snapshot() {
         <Grid item xs={12}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Steam Concurrent Users</Typography>
+              <Typography variant="h6">Steam Concurrent Users (Past 24 Hours)</Typography>
               <Chart
                 type="area"
                 name="Concurrent Users"
                 data={ccu}
+                categories="none"
                 xaxisFormat="datetime"
                 tooltipFormat="MMM dd | HH:mm"
+                pal="palette10"
+                labels=""
               />
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={6}>
-          <Paper className={classes.paper}>xs=6</Paper>
+          <Card>
+            <CardContent>
+              <Typography variant="h6">Most Popular Genres (By Top 70+ Games)</Typography>
+              {popularTags.length > 3 ? (
+                <Chart labels="" type="bar" name="" categories={popularGenresCat} data={popularGenres} pal="palette4" />
+              ) : (
+                <Skeleton animation="wave" variant="rect" height={270} />
+              )}
+            </CardContent>
+          </Card>
         </Grid>
         <Grid item xs={6}>
-          <Paper className={classes.paper}>xs=6</Paper>
+          <Card>
+            <CardContent>
+              <Typography variant="h6">Most Popular Genre Tags (By Top 70+ Games)</Typography>
+              {popularTags.length > 3 ? (
+                <Chart labels="" type="bar" name="" categories={popularTagsCat} data={popularTags} pal="palette7" />
+              ) : (
+                <Skeleton animation="wave" variant="rect" height={270} />
+              )}
+            </CardContent>
+          </Card>
         </Grid>
         <Grid item xs={12}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Top Games (Based on Player Count)</Typography>
+              <Typography variant="h6">Top 70+ Games (Based on Player Count)</Typography>
               <List dense cols={1} margin={0}>
                 {top100.map((key) => (
-                  <CardActionArea>
-                    <ListItem
-                      disableGutters={true}
-                      component="a"
-                      href={`/search/${key}`}
-                      className={listClasses.listItem}
-                      key={key}
-                      cols={1}
-                    >
-                      <img
-                        className={listClasses.listImage}
-                        src={`https://steamcdn-a.akamaihd.net/steam/apps/${key}/header.jpg?t=1568751918`}
-                        alt={key}
-                      />
-                    </ListItem>
+                  <CardActionArea key={key}>
+                    {top100.length > 3 ? (
+                      <ListItem
+                        disableGutters={true}
+                        component="a"
+                        href={`/search/${key}`}
+                        className={listClasses.listItem}
+                        key={key}
+                        cols={1}
+                      >
+                        <img
+                          className={listClasses.listImage}
+                          src={`https://steamcdn-a.akamaihd.net/steam/apps/${key}/header.jpg?t=1568751918`}
+                          alt={key}
+                        />
+                      </ListItem>
+                    ) : (
+                      <Skeleton animation="wave" variant="rect" height={270} />
+                    )}
                   </CardActionArea>
                 ))}
               </List>
