@@ -11,7 +11,7 @@ class App extends Component {
           parentHeightOffset: 0,
           background: "#1d1d1d",
           toolbar: {
-            offsetY: -27,
+            // offsetY: -27,
           },
         },
         xaxis: {

@@ -15,6 +15,19 @@ router.get("/steam/ccu", async function (req, res, next) {
   }
 });
 
+router.get("/text/:params", async function (req, res, next) {
+  try {
+    const response = await fetch("https://steamspy.com/api.php?request=" + req.params.params);
+    if (!response.ok) {
+      throw response;
+    }
+    const data = await response.text();
+    res.send(data);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 router.get("/:params", async function (req, res, next) {
   try {
     const response = await fetch("https://steamspy.com/api.php?request=" + req.params.params);

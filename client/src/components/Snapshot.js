@@ -8,6 +8,7 @@ import CardContent from "@material-ui/core/CardContent";
 import { Typography } from "@material-ui/core";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+import CardActionArea from "@material-ui/core/CardActionArea";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,8 +21,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const listStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+    flexWrap: "wrap",
+  },
+  listItem: {
+    justifyContent: "center",
+  },
+  listImage: {
+    width: "100%",
+    maxWidth: "460px",
+    // marginTop: theme.spacing(2),
+  },
+}));
+
 export default function Snapshot() {
   const classes = useStyles();
+  const listClasses = listStyles();
   const [ccu, setCcu] = useState([
     [1589235234000, 17363681],
     [1589235520000, 17255569],
@@ -29,7 +46,7 @@ export default function Snapshot() {
     [1589236092000, 17053997],
     [1589236378000, 16950161],
   ]);
-  const [top100, setTop100] = useState({ "570": "dota", "434170": "dota", "548430": "dota" });
+  const [top100, setTop100] = useState([570, 434170, 548430]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,12 +64,16 @@ export default function Snapshot() {
 
     const fetchData2 = async () => {
       try {
-        const response = await fetch("/api/top100in2weeks");
+        const response = await fetch("/api/text/top100in2weeks");
         if (!response.ok) {
           throw response;
         }
-        const data = await response.json();
-        setTop100(data);
+        const data = await response.text();
+        const newData = data.split(/:{|\n/);
+        const numberData = newData.filter((item) => item.length < 10);
+        const almostfinalData = numberData.map((item) => parseInt(item.match(/\d+/g)[0], 10));
+        const finalData = almostfinalData.filter((item) => item > 550);
+        setTop100(finalData);
       } catch (err) {
         console.log(err);
       }
@@ -79,40 +100,37 @@ export default function Snapshot() {
           </Card>
         </Grid>
         <Grid item xs={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Top 50 Games (Based on Players)</Typography>
-              <List dense cols={1} margin={0}>
-                {Object.entries(top100)
-                  .reverse()
-                  .map(([key, value]) => (
-                    <ListItem key={key} cols={1}>
-                      <img
-                        width="100%"
-                        height="100%"
-                        src={`https://steamcdn-a.akamaihd.net/steam/apps/${key}/header.jpg?t=1568751918`}
-                        alt={key}
-                      />
-                    </ListItem>
-                  ))}
-              </List>
-            </CardContent>
-          </Card>
+          <Paper className={classes.paper}>xs=6</Paper>
         </Grid>
         <Grid item xs={6}>
           <Paper className={classes.paper}>xs=6</Paper>
         </Grid>
-        <Grid item xs={3}>
-          <Paper className={classes.paper}>xs=3</Paper>
-        </Grid>
-        <Grid item xs={3}>
-          <Paper className={classes.paper}>xs=3</Paper>
-        </Grid>
-        <Grid item xs={3}>
-          <Paper className={classes.paper}>xs=3</Paper>
-        </Grid>
-        <Grid item xs={3}>
-          <Paper className={classes.paper}>xs=3</Paper>
+        <Grid item xs={12}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6">Top Games (Based on Player Count)</Typography>
+              <List dense cols={1} margin={0}>
+                {top100.map((key) => (
+                  <CardActionArea>
+                    <ListItem
+                      disableGutters={true}
+                      component="a"
+                      href={`/search/${key}`}
+                      className={listClasses.listItem}
+                      key={key}
+                      cols={1}
+                    >
+                      <img
+                        className={listClasses.listImage}
+                        src={`https://steamcdn-a.akamaihd.net/steam/apps/${key}/header.jpg?t=1568751918`}
+                        alt={key}
+                      />
+                    </ListItem>
+                  </CardActionArea>
+                ))}
+              </List>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </div>
