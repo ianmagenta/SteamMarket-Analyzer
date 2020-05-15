@@ -30,6 +30,10 @@ const useStyles = makeStyles((theme) => ({
   image: {
     maxHeight: "512px",
   },
+  cardFlex: {
+    display: "flex",
+    justifyContent: "center",
+  },
 }));
 
 export default function FullWidthGrid() {
@@ -40,7 +44,7 @@ export default function FullWidthGrid() {
       <Grid container spacing={3}>
         <Grid item xs={12} sm={12}>
           <Card>
-            <CardContent>
+            <CardContent className={classes.cardFlex}>
               <img src={logo} alt="logo" className={classes.image} />
             </CardContent>
           </Card>
