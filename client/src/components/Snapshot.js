@@ -112,13 +112,13 @@ export default function Snapshot() {
           // Tag Data
           tagData.push(...Object.keys(resData.tags));
           const chartTagData = arrayAmount(tagData);
-          for (let j = 0; j < chartTagData[1].length; j++) {
-            if (chartTagData[1][j] < 20) {
-              chartTagData[1][j] = 0;
-              chartTagData[0][j] = "";
+          chartTagData[1] = chartTagData[1].filter((item, index) => {
+            if (item < 20) {
+              chartTagData[0][index] = "";
+            } else {
+              return true;
             }
-          }
-          chartTagData[1] = chartTagData[1].filter((item) => item !== 0);
+          });
           chartTagData[0] = chartTagData[0].filter((item) => item !== "");
           console.log(chartTagData);
           setPopularTags(chartTagData[1]);
