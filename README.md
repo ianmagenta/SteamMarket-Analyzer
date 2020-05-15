@@ -1,5 +1,7 @@
 # SteamMarket Analyzer
 
+https://steam-market-analyzer.herokuapp.com/
+
 Provides developer-focused statistics about the Steam storefront.
 
 ## Overview
@@ -13,5 +15,6 @@ That's where the **SteamMarket Analyzer** (**SMA** for short) comes in! SMA prov
 SMA was built using:
 
 - [The Steam Spy API](https://steamspy.com/about)
+- Material
 - React
 - And good old JS, HTML, CSS
