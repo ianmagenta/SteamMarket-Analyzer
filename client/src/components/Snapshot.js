@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Chart from "./Chart";
 import Card from "@material-ui/core/Card";
@@ -54,16 +53,18 @@ export default function Snapshot() {
   const [popularTagsCat, setPopularTagsCat] = useState(["Action", "Adventure", "FPS"]);
 
   useEffect(() => {
+    const abortController = new AbortController();
+    const signal = abortController.signal;
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/steam/ccu");
+        const response = await fetch("/api/steam/ccu", { signal: signal });
         if (!response.ok) {
           throw response;
         }
         const [data] = await response.json();
         setCcu(data.data);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     };
 
@@ -73,7 +74,7 @@ export default function Snapshot() {
           b = [],
           prev;
 
-        let arr = arr1.concat().sort();
+        let arr = [...arr1];
         for (var i = 0; i < arr.length; i++) {
           if (arr[i] !== prev) {
             a.push(arr[i]);
@@ -87,7 +88,7 @@ export default function Snapshot() {
       }
 
       try {
-        const response = await fetch("/api/text/top100in2weeks");
+        const response = await fetch("/api/text/top100in2weeks", { signal: signal });
         if (!response.ok) {
           throw response;
         }
@@ -100,7 +101,7 @@ export default function Snapshot() {
         const genreData = [];
         const tagData = [];
         for (let i = 0; i < finalData.length; i++) {
-          const res = await fetch(`/api/appdetails&appid=${finalData[i]}`);
+          const res = await fetch(`/api/appdetails&appid=${finalData[i]}`, { signal: signal });
           const resData = await res.json();
 
           // Genre Data
@@ -115,22 +116,24 @@ export default function Snapshot() {
           chartTagData[1] = chartTagData[1].filter((item, index) => {
             if (item < 20) {
               chartTagData[0][index] = "";
-            } else {
-              return true;
             }
+            return item >= 20;
           });
           chartTagData[0] = chartTagData[0].filter((item) => item !== "");
-          console.log(chartTagData);
           setPopularTags(chartTagData[1]);
           setPopularTagsCat(chartTagData[0]);
         }
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     };
 
     fetchData();
     fetchData2();
+
+    return () => {
+      abortController.abort();
+    };
   }, []);
   return (
     <div className={classes.root}>

@@ -28,6 +28,10 @@ router.get("/text/:params", async function (req, res, next) {
   }
 });
 
+router.get("/wait", async function (req, res, next) {
+  res.send("");
+});
+
 router.get("/:params", async function (req, res, next) {
   try {
     const response = await fetch("https://steamspy.com/api.php?request=" + req.params.params);
