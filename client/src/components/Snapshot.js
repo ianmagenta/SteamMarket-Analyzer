@@ -152,7 +152,7 @@ export default function Snapshot() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <Card>
             <CardContent>
               <Typography variant="h6">Most Popular Genres (By Top 70+ Games)</Typography>
@@ -164,7 +164,7 @@ export default function Snapshot() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <Card>
             <CardContent>
               <Typography variant="h6">Most Popular Genre Tags (By Top 70+ Games)</Typography>

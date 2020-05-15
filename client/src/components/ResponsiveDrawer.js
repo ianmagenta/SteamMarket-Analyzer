@@ -26,6 +26,7 @@ import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 import { useHistory } from "react-router-dom";
 
 import Snapshot from "./Snapshot";
+import About from "./About";
 
 const drawerWidth = 240;
 
@@ -265,6 +266,7 @@ function ResponsiveDrawer(props) {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Route exact path="/snapshot" component={Snapshot} />
+        <Route exact path="/about" component={About} />
       </main>
     </div>
   );
