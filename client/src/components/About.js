@@ -31,8 +31,8 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: "512px",
   },
   cardFlex: {
-    display: "flex",
-    justifyContent: "center",
+    display: "block",
+    textAlign: "center",
   },
 }));
 
