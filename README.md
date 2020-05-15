@@ -1,6 +1,6 @@
 # SteamMarket Analyzer
 
-[Check it out here](https://steam-market-analyzer.herokuapp.com/).
+[Check it out here](https://steammarket-analyzer.herokuapp.com/).
 
 Provides developer-focused statistics about the Steam storefront.
 
