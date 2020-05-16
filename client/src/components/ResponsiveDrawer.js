@@ -28,6 +28,7 @@ import TrendingUpSharpIcon from "@material-ui/icons/TrendingUpSharp";
 import Snapshot from "./Snapshot";
 import About from "./About";
 import Analysis from "./Analysis";
+import Search from "./Search";
 
 const drawerWidth = 240;
 
@@ -269,6 +270,7 @@ function ResponsiveDrawer(props) {
         <Route exact path="/snapshot" component={Snapshot} />
         <Route exact path="/analysis" component={Analysis} />
         <Route exact path="/about" component={About} />
+        <Route path="/search/:queryString" component={Search} />
       </main>
     </div>
   );

@@ -46,7 +46,7 @@ export default function Snapshot() {
     [1589236092000, 17053997],
     [1589236378000, 16950161],
   ]);
-  const [top100, setTop100] = useState([570, 434170, 548430]);
+  const [top100, setTop100] = useState([570, 730, 550]);
   const [popularGenres, setPopularGenres] = useState([1, 1, 1]);
   const [popularGenresCat, setPopularGenresCat] = useState(["Action", "Adventure", "FPS"]);
   const [popularTags, setPopularTags] = useState([0, 0, 0]);
@@ -185,26 +185,28 @@ export default function Snapshot() {
               <Typography variant="h6">Top 75+ Games (Based on Player Count)</Typography>
               <List dense cols={1} margin={0}>
                 {top100.map((key) => (
-                  <CardActionArea key={key}>
+                  <div key={key}>
                     {top100.length > 3 ? (
-                      <ListItem
-                        disableGutters={true}
-                        component="a"
-                        href={`/search/${key}`}
-                        className={listClasses.listItem}
-                        key={key}
-                        cols={1}
-                      >
-                        <img
-                          className={listClasses.listImage}
-                          src={`https://steamcdn-a.akamaihd.net/steam/apps/${key}/header.jpg?t=1568751918`}
-                          alt={key}
-                        />
-                      </ListItem>
+                      <CardActionArea>
+                        <ListItem
+                          disableGutters={true}
+                          component="a"
+                          href={`/game/${key}`}
+                          className={listClasses.listItem}
+                          key={key}
+                          cols={1}
+                        >
+                          <img
+                            className={listClasses.listImage}
+                            src={`https://steamcdn-a.akamaihd.net/steam/apps/${key}/header.jpg?t=1568751918`}
+                            alt={key}
+                          />
+                        </ListItem>
+                      </CardActionArea>
                     ) : (
                       <Skeleton animation="wave" variant="rect" height={270} />
                     )}
-                  </CardActionArea>
+                  </div>
                 ))}
               </List>
             </CardContent>

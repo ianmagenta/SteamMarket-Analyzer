@@ -19,13 +19,14 @@
   },
   "homepage": "https://github.com/ianmagenta/Steam-Market-Analyzer#readme",
   "dependencies": {
+    "body-parser": "*",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "express": "*",
-    "body-parser": "*",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
+    "memory-cache": "^0.2.0",
     "morgan": "~1.9.1",
     "node-fetch": "^2.6.0"
   }

@@ -360,7 +360,7 @@ export default function FullWidthGrid() {
             <CardContent>
               {marketGaps.length > 5 ? (
                 <>
-                  <Typography variant="h6">Under-Used Genres (Missing from the Top 75+)</Typography>
+                  <Typography variant="h6">Under-Used Genre Tags (Missing from the Top 75+)</Typography>
                   <CardContent />
                   <div className={classes2.chip}>
                     {marketGaps.map((gap) => (

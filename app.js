@@ -6,15 +6,32 @@ var logger = require("morgan");
 var cors = require("cors");
 var apiRouter = require("./routes/api");
 const fetch = require("node-fetch");
+var mcache = require("memory-cache");
 
 var app = express();
+
+var cache = (duration) => {
+  return (req, res, next) => {
+    let key = "__express__" + req.originalUrl || req.url;
+    let cachedBody = mcache.get(key);
+    if (cachedBody) {
+      res.send(cachedBody);
+      return;
+    } else {
+      res.sendResponse = res.send;
+      res.send = (body) => {
+        mcache.put(key, body, duration * 1000);
+        res.sendResponse(body);
+      };
+      next();
+    }
+  };
+};
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "/client/build")));
 
 // view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
 
 app.use(cors());
 app.use(logger("dev"));
@@ -26,6 +43,8 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   next();
 });
+
+app.use(cache(604800));
 
 app.use("/api", apiRouter);
 
