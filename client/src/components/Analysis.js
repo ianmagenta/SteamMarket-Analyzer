@@ -356,7 +356,7 @@ export default function FullWidthGrid() {
                     </Table>
                   </TableContainer>
                   <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
+                    rowsPerPageOptions={[5, 10, 25, 50, 100]}
                     component="div"
                     count={rows.length}
                     rowsPerPage={rowsPerPage}
@@ -383,7 +383,7 @@ export default function FullWidthGrid() {
                   <CardContent />
                   <div className={classes2.chip}>
                     {marketGaps.map((gap) => (
-                      <Chip label={gap} />
+                      <Chip key={gap} label={gap} />
                     ))}
                   </div>
                 </>
