@@ -15,7 +15,7 @@ That's where the **SteamMarket Analyzer** (**SMA** for short) comes in! SMA prov
 SMA was built using:
 
 - [The Steam Spy API](https://steamspy.com/about)
-- [Steam's Unnoficial Storefront API](https://wiki.teamfortress.com/wiki/User:RJackson/StorefrontAPI)
+- [Steam's Unofficial Storefront API](https://wiki.teamfortress.com/wiki/User:RJackson/StorefrontAPI)
 - [Material-UI](https://material-ui.com/)
 - [ApexCharts](https://apexcharts.com/)
 - [React](https://reactjs.org/)

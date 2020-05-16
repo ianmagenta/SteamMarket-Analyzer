@@ -15,7 +15,7 @@
 - "/search/:queryString"
   - If search was performed with header search box, user is redirected here.
   - Displays games that match the search term.
-- "/search/:appId"
+- "/game/:appId"
   - Displays statistics about a specific game.
 - "/about"
   - Site explanation, personal info, and github link
