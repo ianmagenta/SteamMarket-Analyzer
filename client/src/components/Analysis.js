@@ -123,8 +123,6 @@ EnhancedTableHead.propTypes = {
 };
 
 const EnhancedTableToolbar = (props) => {
-  const { numSelected } = props;
-
   return (
     <Toolbar style={{ paddingLeft: 0 }}>
       <Typography variant="h6" id="tableTitle" component="div">
@@ -132,10 +130,6 @@ const EnhancedTableToolbar = (props) => {
       </Typography>
     </Toolbar>
   );
-};
-
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -186,14 +180,13 @@ const useStyles2 = makeStyles((theme) => ({
 export default function FullWidthGrid() {
   const classes2 = useStyles2();
   const [tagData, setTagData] = useState(Tags);
+  const dense = true;
 
   // Table
   const classes = useStyles();
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("number");
-  const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
-  const [dense, setDense] = useState(true);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState([]);
   const [marketGaps, setMarketGaps] = useState([]);
@@ -212,8 +205,6 @@ export default function FullWidthGrid() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
-  const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
@@ -305,7 +296,7 @@ export default function FullWidthGrid() {
             <CardContent>
               {rows.length > 1 ? (
                 <div className={classes.root}>
-                  <EnhancedTableToolbar numSelected={selected.length} />
+                  <EnhancedTableToolbar />
                   <TableContainer>
                     <Table
                       className={classes.table}
@@ -315,7 +306,6 @@ export default function FullWidthGrid() {
                     >
                       <EnhancedTableHead
                         classes={classes}
-                        numSelected={selected.length}
                         order={order}
                         orderBy={orderBy}
                         onRequestSort={handleRequestSort}
@@ -325,18 +315,10 @@ export default function FullWidthGrid() {
                         {stableSort(rows, getComparator(order, orderBy))
                           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                           .map((row, index) => {
-                            const isItemSelected = isSelected(row.name);
                             const labelId = `enhanced-table-checkbox-${index}`;
 
                             return (
-                              <TableRow
-                                hover
-                                role="checkbox"
-                                aria-checked={isItemSelected}
-                                tabIndex={-1}
-                                key={row.name}
-                                selected={isItemSelected}
-                              >
+                              <TableRow hover role="checkbox" tabIndex={-1} key={row.name}>
                                 <TableCell component="th" id={labelId} scope="row" padding="none">
                                   {row.name}
                                 </TableCell>
@@ -390,7 +372,7 @@ export default function FullWidthGrid() {
               ) : (
                 <>
                   <Typography variant="h6">Analyzing Market Gaps... (This may take a couple of minutes)</Typography>
-                  <Skeleton animation="wave" variant="rect" height={455} />
+                  <Skeleton animation="wave" variant="rect" height={100} />
                 </>
               )}
             </CardContent>
