@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -15,30 +14,30 @@ import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
+import Skeleton from "@material-ui/lab/Skeleton";
+import Chip from "@material-ui/core/Chip";
 
 import Tags from "./Tags";
 
 // Start table stuff
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+function createData(name, number, reviews, price, avgc) {
+  return { name, number, reviews, price, avgc };
 }
 
-const rows = [
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Donut", 452, 25.0, 51, 4.9),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-  createData("Honeycomb", 408, 3.2, 87, 6.5),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Jelly Bean", 375, 0.0, 94, 0.0),
-  createData("KitKat", 518, 26.0, 65, 7.0),
-  createData("Lollipop", 392, 0.2, 98, 0.0),
-  createData("Marshmallow", 318, 0, 81, 2.0),
-  createData("Nougat", 360, 19.0, 9, 37.0),
-  createData("Oreo", 437, 18.0, 63, 4.0),
-];
+function returnAvg(arr) {
+  if (arr.length === 0) {
+    return 0;
+  } else {
+    let sum = 0;
+    for (let j = 0; j < arr.length; j++) {
+      if (arr[j] !== 0) {
+        sum += arr[j];
+      }
+    }
+    return sum / arr.length;
+  }
+}
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -73,10 +72,10 @@ const headCells = [
     disablePadding: true,
     label: "Tag Name",
   },
-  { id: "calories", numeric: true, disablePadding: false, label: "# of Games With Tag" },
-  { id: "fat", numeric: true, disablePadding: false, label: "Net Positive Reviews" },
-  { id: "carbs", numeric: true, disablePadding: false, label: "Average Price" },
-  { id: "protein", numeric: true, disablePadding: false, label: "Average Concurrent Users" },
+  { id: "number", numeric: true, disablePadding: false, label: "# of Games With Tag" },
+  { id: "reviews", numeric: true, disablePadding: false, label: "Avg Net Review Score" },
+  { id: "price", numeric: true, disablePadding: false, label: "Avg Price (in USD)" },
+  { id: "avgc", numeric: true, disablePadding: false, label: "Avg Concurrent Users" },
 ];
 
 function EnhancedTableHead(props) {
@@ -129,7 +128,7 @@ const EnhancedTableToolbar = (props) => {
   return (
     <Toolbar style={{ paddingLeft: 0 }}>
       <Typography variant="h6" id="tableTitle" component="div">
-        Steam Market Data by Tag
+        Top 75+ Games by Tag
       </Typography>
     </Toolbar>
   );
@@ -174,6 +173,14 @@ const useStyles2 = makeStyles((theme) => ({
     textAlign: "center",
     color: theme.palette.text.secondary,
   },
+  chip: {
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    "& > *": {
+      margin: theme.spacing(0.5),
+    },
+  },
 }));
 
 export default function FullWidthGrid() {
@@ -182,12 +189,14 @@ export default function FullWidthGrid() {
 
   // Table
   const classes = useStyles();
-  const [order, setOrder] = React.useState("desc");
-  const [orderBy, setOrderBy] = React.useState("calories");
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(true);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [order, setOrder] = useState("desc");
+  const [orderBy, setOrderBy] = useState("number");
+  const [selected, setSelected] = useState([]);
+  const [page, setPage] = useState(0);
+  const [dense, setDense] = useState(true);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rows, setRows] = useState([]);
+  const [marketGaps, setMarketGaps] = useState([]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -230,31 +239,54 @@ export default function FullWidthGrid() {
           const res = await fetch(`/api/appdetails&appid=${key}`, { signal: signal });
           const resData = await res.json();
           completeData.push(resData);
-          console.log(completeData);
+          // console.log(completeData);
         }
+
+        // API DOWN
+        // let completeData = [
+        //   { tags: { Horror: 10, Indie: 10 }, positive: 100, negative: 2, price: "0", ccu: 10 },
+        //   { tags: { Horror: 10, Action: 10 }, positive: 100, negative: 50, price: "2999", ccu: 20 },
+        // ];
+        // console.log("resume");
+        // API DOWN
 
         // Whew!
         for (let i = 0; i < completeData.length; i++) {
+          await fetch("/api/wait", { signal: signal });
           for (let key in completeData[i].tags) {
-            const res = await fetch(`/api/wait`, { signal: signal });
             const index = tagData.findIndex((e) => e.tag === key);
             if (index !== -1) {
               const newArray = [...tagData];
               newArray[index].count += 1;
-              newArray[index].averagePrice.push(parseInt(completeData[i].price, 10) / 100);
+              newArray[index].reviewScore.push(completeData[i].positive - completeData[i].negative);
+              const parsedPrice = parseInt(completeData[i].price, 10) / 100;
+              newArray[index].averagePrice.push(parsedPrice);
               newArray[index].averageCcu.push(completeData[i].ccu);
-              console.log(newArray[index]);
+              // console.log(newArray[index]);
               setTagData(newArray);
             }
           }
         }
-
-        // for (let key in filterData) {
-        //     for ()
-        //   const index = tags.findIndex(item => item.tag)
-        // }
+        for (let i = 0; i < tagData.length; i++) {
+          // console.log(rows);
+          await fetch("/api/wait", { signal: signal });
+          if (tagData[i].count > 0) {
+            setRows((rows) => [
+              ...rows,
+              createData(
+                tagData[i].tag,
+                tagData[i].count,
+                Math.floor(returnAvg(tagData[i].reviewScore)),
+                parseFloat(returnAvg(tagData[i].averagePrice).toFixed(2)),
+                Math.floor(returnAvg(tagData[i].averageCcu))
+              ),
+            ]);
+          } else {
+            setMarketGaps((marketGaps) => [...marketGaps, tagData[i].tag]);
+          }
+        }
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     };
 
@@ -271,87 +303,98 @@ export default function FullWidthGrid() {
         <Grid item xs={12}>
           <Card>
             <CardContent>
-              <div className={classes.root}>
-                <EnhancedTableToolbar numSelected={selected.length} />
-                <TableContainer>
-                  <Table
-                    className={classes.table}
-                    aria-labelledby="tableTitle"
-                    size={dense ? "small" : "medium"}
-                    aria-label="enhanced table"
-                  >
-                    <EnhancedTableHead
-                      classes={classes}
-                      numSelected={selected.length}
-                      order={order}
-                      orderBy={orderBy}
-                      onRequestSort={handleRequestSort}
-                      rowCount={rows.length}
-                    />
-                    <TableBody>
-                      {stableSort(rows, getComparator(order, orderBy))
-                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        .map((row, index) => {
-                          const isItemSelected = isSelected(row.name);
-                          const labelId = `enhanced-table-checkbox-${index}`;
+              {rows.length > 1 ? (
+                <div className={classes.root}>
+                  <EnhancedTableToolbar numSelected={selected.length} />
+                  <TableContainer>
+                    <Table
+                      className={classes.table}
+                      aria-labelledby="tableTitle"
+                      size={dense ? "small" : "medium"}
+                      aria-label="enhanced table"
+                    >
+                      <EnhancedTableHead
+                        classes={classes}
+                        numSelected={selected.length}
+                        order={order}
+                        orderBy={orderBy}
+                        onRequestSort={handleRequestSort}
+                        rowCount={rows.length}
+                      />
+                      <TableBody>
+                        {stableSort(rows, getComparator(order, orderBy))
+                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                          .map((row, index) => {
+                            const isItemSelected = isSelected(row.name);
+                            const labelId = `enhanced-table-checkbox-${index}`;
 
-                          return (
-                            <TableRow
-                              hover
-                              role="checkbox"
-                              aria-checked={isItemSelected}
-                              tabIndex={-1}
-                              key={row.name}
-                              selected={isItemSelected}
-                            >
-                              <TableCell component="th" id={labelId} scope="row" padding="none">
-                                {row.name}
-                              </TableCell>
-                              <TableCell align="right">{row.calories}</TableCell>
-                              <TableCell align="right">{row.fat}</TableCell>
-                              <TableCell align="right">{row.carbs}</TableCell>
-                              <TableCell align="right">{row.protein}</TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      {emptyRows > 0 && (
-                        <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                          <TableCell colSpan={6} />
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25]}
-                  component="div"
-                  count={rows.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onChangePage={handleChangePage}
-                  onChangeRowsPerPage={handleChangeRowsPerPage}
-                />
-              </div>
+                            return (
+                              <TableRow
+                                hover
+                                role="checkbox"
+                                aria-checked={isItemSelected}
+                                tabIndex={-1}
+                                key={row.name}
+                                selected={isItemSelected}
+                              >
+                                <TableCell component="th" id={labelId} scope="row" padding="none">
+                                  {row.name}
+                                </TableCell>
+                                <TableCell align="right">{row.number}</TableCell>
+                                <TableCell align="right">{row.reviews}</TableCell>
+                                <TableCell align="right">{row.price}</TableCell>
+                                <TableCell align="right">{row.avgc}</TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        {emptyRows > 0 && (
+                          <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                            <TableCell colSpan={6} />
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onChangePage={handleChangePage}
+                    onChangeRowsPerPage={handleChangeRowsPerPage}
+                  />
+                </div>
+              ) : (
+                <>
+                  <Typography variant="h6">Analyzing Top Games... (This may take a couple of minutes)</Typography>
+                  <Skeleton animation="wave" variant="rect" height={455} />
+                </>
+              )}
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <Paper className={classes2.paper}>xs=12 sm=6</Paper>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <Paper className={classes2.paper}>xs=12 sm=6</Paper>
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <Paper className={classes2.paper}>xs=6 sm=3</Paper>
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <Paper className={classes2.paper}>xs=6 sm=3</Paper>
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <Paper className={classes2.paper}>xs=6 sm=3</Paper>
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <Paper className={classes2.paper}>xs=6 sm=3</Paper>
+        <Grid item xs={12} sm={12}>
+          <Card>
+            <CardContent>
+              {marketGaps.length > 5 ? (
+                <>
+                  <Typography variant="h6">Under-Used Genres (Missing from the Top 75+)</Typography>
+                  <CardContent />
+                  <div className={classes2.chip}>
+                    {marketGaps.map((gap) => (
+                      <Chip label={gap} />
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Typography variant="h6">Analyzing Market Gaps... (This may take a couple of minutes)</Typography>
+                  <Skeleton animation="wave" variant="rect" height={455} />
+                </>
+              )}
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </div>

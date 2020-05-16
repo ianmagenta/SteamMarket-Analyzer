@@ -20,10 +20,10 @@ import "../index.css";
 import logo from "../images/SMA-logo2.svg";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import { Link, Route } from "react-router-dom";
-import TimelineIcon from "@material-ui/icons/Timeline";
 import BarChartIcon from "@material-ui/icons/BarChart";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 import { useHistory } from "react-router-dom";
+import TrendingUpSharpIcon from "@material-ui/icons/TrendingUpSharp";
 
 import Snapshot from "./Snapshot";
 import About from "./About";
@@ -191,7 +191,7 @@ function ResponsiveDrawer(props) {
           <ListItem component={Link} to={`/${text.toLowerCase()}`} button key={text}>
             <ListItemIcon>
               {text === "Snapshot" ? (
-                <TimelineIcon />
+                <TrendingUpSharpIcon />
               ) : text === "Analysis" ? (
                 <BarChartIcon />
               ) : text === "About" ? (

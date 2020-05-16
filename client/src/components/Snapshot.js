@@ -74,7 +74,7 @@ export default function Snapshot() {
           b = [],
           prev;
 
-        let arr = [...arr1];
+        let arr = [...arr1].sort();
         for (var i = 0; i < arr.length; i++) {
           if (arr[i] !== prev) {
             a.push(arr[i]);
@@ -158,7 +158,7 @@ export default function Snapshot() {
         <Grid item xs={12} sm={6}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Most Popular Genres (By Top 70+ Games)</Typography>
+              <Typography variant="h6">Most Popular Genres (By Top 75+ Games)</Typography>
               {popularTags.length > 3 ? (
                 <Chart labels="" type="bar" name="" categories={popularGenresCat} data={popularGenres} pal="palette4" />
               ) : (
@@ -170,7 +170,7 @@ export default function Snapshot() {
         <Grid item xs={12} sm={6}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Most Popular Genre Tags (By Top 70+ Games)</Typography>
+              <Typography variant="h6">Most Popular Genre Tags (By Top 75+ Games)</Typography>
               {popularTags.length > 3 ? (
                 <Chart labels="" type="bar" name="" categories={popularTagsCat} data={popularTags} pal="palette7" />
               ) : (
@@ -182,7 +182,7 @@ export default function Snapshot() {
         <Grid item xs={12}>
           <Card>
             <CardContent>
-              <Typography variant="h6">Top 70+ Games (Based on Player Count)</Typography>
+              <Typography variant="h6">Top 75+ Games (Based on Player Count)</Typography>
               <List dense cols={1} margin={0}>
                 {top100.map((key) => (
                   <CardActionArea key={key}>
