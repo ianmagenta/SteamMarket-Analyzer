@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -88,6 +87,8 @@ export default function FullWidthGrid(props) {
   };
 
   useEffect(() => {
+    setFinishedSearch(false);
+    setSearchResults([]);
     const abortController = new AbortController();
     const signal = abortController.signal;
     const fetchData = async () => {
@@ -126,13 +127,13 @@ export default function FullWidthGrid(props) {
         }
 
         setSearchResults(matches);
+        setFinishedSearch(true);
       } catch (err) {
         console.log(err);
       }
     };
 
     fetchData();
-    setFinishedSearch(true);
 
     return () => {
       abortController.abort();
@@ -145,7 +146,14 @@ export default function FullWidthGrid(props) {
         <Grid item xs={12} sm={12}>
           <Card>
             <CardContent>
-              {finishedSearch ? (
+              {!finishedSearch ? (
+                <>
+                  <Typography variant="h6" align="center">
+                    Searching for Games...
+                  </Typography>
+                  <Skeleton animation="wave" />
+                </>
+              ) : searchResults.length > 0 ? (
                 <>
                   <Typography variant="h6" align="center">
                     Search Results
@@ -154,15 +162,17 @@ export default function FullWidthGrid(props) {
               ) : (
                 <>
                   <Typography variant="h6" align="center">
-                    Searching for Games...
+                    No results found for
                   </Typography>
-                  <Skeleton animation="wave" />
+                  <Typography variant="h6" align="center">
+                    " {queryString} "
+                  </Typography>
                 </>
               )}
             </CardContent>
           </Card>
         </Grid>
-        {searchResults.length > 0 && finishedSearch ? (
+        {finishedSearch ? (
           <>
             {searchResults.map((result) => (
               <Grid item xs={12} sm={6} lg={3} xl={2} key={result.appid}>
@@ -187,13 +197,7 @@ export default function FullWidthGrid(props) {
             ))}
           </>
         ) : (
-          <Grid item xs={12} sm={12}>
-            <Card>
-              <CardContent>
-                <Typography align="center">No Results Found for "{queryString}"</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+          <></>
         )}
       </Grid>
       <div className={classes.snack}>

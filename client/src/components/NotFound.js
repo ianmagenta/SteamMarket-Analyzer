@@ -1,9 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import Alert from "@material-ui/lab/Alert";
@@ -20,6 +17,8 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     width: "100%",
     height: "100%",
+    maxWidth: "300px",
+    maxHeight: "300px",
   },
   alert: {
     backgroundColor: "#1976d2",

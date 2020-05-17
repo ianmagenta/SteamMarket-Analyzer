@@ -386,7 +386,7 @@ export default function FullWidthGrid() {
                   <CardContent />
                   <div className={classes2.chip}>
                     {marketGaps.map((gap) => (
-                      <Chip key={gap} label={gap} />
+                      <Chip size="small" key={gap} label={gap} />
                     ))}
                   </div>
                 </>
