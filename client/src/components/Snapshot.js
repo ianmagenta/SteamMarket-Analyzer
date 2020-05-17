@@ -109,11 +109,8 @@ export default function Snapshot() {
 
       try {
         const response = await fetch("/api/text/top100in2weeks", { signal: signal });
-        if (!response.ok) {
-          throw response;
-        }
         const data = await response.text();
-        if (data === "{}") {
+        if (data === "{}" || !response.ok) {
           setOpen(true);
           return;
         }

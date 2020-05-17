@@ -233,12 +233,9 @@ export default function FullWidthGrid() {
     const fetchData = async () => {
       try {
         const response = await fetch("/api/top100in2weeks");
-        if (!response.ok) {
-          throw response;
-        }
         const data = await response.json();
         const dataKeys = Object.keys(data);
-        if (dataKeys.length === 0) {
+        if (dataKeys.length === 0 || !response.ok) {
           setOpen(true);
           return;
         }

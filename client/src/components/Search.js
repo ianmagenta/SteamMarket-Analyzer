@@ -92,12 +92,9 @@ export default function FullWidthGrid(props) {
     const fetchData = async () => {
       try {
         const response = await fetch("/api/all", { signal: signal });
-        if (!response.ok) {
-          throw response;
-        }
         const data = await response.json();
         const values = Object.values(data);
-        if (values.length === 0) {
+        if (values.length === 0 || !response.ok) {
           setOpen(true);
           return;
         }
