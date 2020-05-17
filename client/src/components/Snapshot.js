@@ -9,6 +9,12 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import Skeleton from "@material-ui/lab/Skeleton";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,6 +24,12 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     textAlign: "center",
     color: theme.palette.text.secondary,
+  },
+  snack: {
+    width: "100%",
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
   },
 }));
 
@@ -51,6 +63,14 @@ export default function Snapshot() {
   const [popularGenresCat, setPopularGenresCat] = useState(["Action", "Adventure", "FPS"]);
   const [popularTags, setPopularTags] = useState([0, 0, 0]);
   const [popularTagsCat, setPopularTagsCat] = useState(["Action", "Adventure", "FPS"]);
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -93,6 +113,10 @@ export default function Snapshot() {
           throw response;
         }
         const data = await response.text();
+        if (data === "{}") {
+          setOpen(true);
+          return;
+        }
         const newData = data.split(/:{|\n/);
         const numberData = newData.filter((item) => item.length < 10);
         const almostfinalData = numberData.map((item) => parseInt(item.match(/\d+/g)[0], 10));
@@ -213,6 +237,13 @@ export default function Snapshot() {
           </Card>
         </Grid>
       </Grid>
+      <div className={classes.snack}>
+        <Snackbar open={open} onClose={handleClose} anchorOrigin={{ vertical: "bottom", horizontal: "right" }}>
+          <Alert onClose={handleClose} severity="warning">
+            The Steam Spy API seems to be having issues. Some data may not display or load correctly.
+          </Alert>
+        </Snackbar>
+      </div>
     </div>
   );
 }

@@ -8,6 +8,12 @@ import Typography from "@material-ui/core/Typography";
 import Skeleton from "@material-ui/lab/Skeleton";
 import ListItem from "@material-ui/core/ListItem";
 import CardActionArea from "@material-ui/core/CardActionArea";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,6 +30,12 @@ const useStyles = makeStyles((theme) => ({
   listImage: {
     width: "100%",
     maxWidth: "460px",
+  },
+  snack: {
+    width: "100%",
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
   },
 }));
 
@@ -65,6 +77,14 @@ export default function FullWidthGrid(props) {
   const queryString = props.match.params.queryString;
   const classes = useStyles();
   const [searchResults, setSearchResults] = useState([]);
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -77,6 +97,10 @@ export default function FullWidthGrid(props) {
         }
         const data = await response.json();
         const values = Object.values(data);
+        if (values.length === 0) {
+          setOpen(true);
+          return;
+        }
         const isInt = isNaN(parseInt(queryString, 10)) ? false : true;
 
         let matches = [];
@@ -131,9 +155,9 @@ export default function FullWidthGrid(props) {
               ) : (
                 <>
                   <Typography variant="h6" align="center">
-                    No Search Results Found
+                    Searching for Games...
                   </Typography>
-                  {/* <Skeleton animation="wave" /> */}
+                  <Skeleton animation="wave" />
                 </>
               )}
             </CardContent>
@@ -167,6 +191,13 @@ export default function FullWidthGrid(props) {
           <></>
         )}
       </Grid>
+      <div className={classes.snack}>
+        <Snackbar open={open} onClose={handleClose} anchorOrigin={{ vertical: "bottom", horizontal: "right" }}>
+          <Alert onClose={handleClose} severity="warning">
+            The Steam Spy API seems to be having issues. Some data may not display or load correctly.
+          </Alert>
+        </Snackbar>
+      </div>
     </div>
   );
 }

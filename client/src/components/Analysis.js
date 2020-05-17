@@ -16,8 +16,14 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Skeleton from "@material-ui/lab/Skeleton";
 import Chip from "@material-ui/core/Chip";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 
 import Tags from "./Tags";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 // Start table stuff
 
@@ -153,6 +159,12 @@ const useStyles = makeStyles((theme) => ({
     top: 20,
     width: 1,
   },
+  snack: {
+    width: "100%",
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
+  },
 }));
 
 // End table stuff
@@ -189,6 +201,14 @@ export default function FullWidthGrid() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState([]);
   const [marketGaps, setMarketGaps] = useState([]);
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -217,7 +237,12 @@ export default function FullWidthGrid() {
           throw response;
         }
         const data = await response.json();
-        const filterData = Object.keys(data)
+        const dataKeys = Object.keys(data);
+        if (dataKeys.length === 0) {
+          setOpen(true);
+          return;
+        }
+        const filterData = dataKeys
           .filter((key) => Number.parseInt(key, 10) > 550)
           .reduce((obj, key) => {
             obj[key] = data[key];
@@ -371,13 +396,20 @@ export default function FullWidthGrid() {
               ) : (
                 <>
                   <Typography variant="h6">Analyzing Market Gaps... (This may take a couple of minutes)</Typography>
-                  <Skeleton animation="wave" variant="rect" height={100} />
+                  <Skeleton animation="wave" />
                 </>
               )}
             </CardContent>
           </Card>
         </Grid>
       </Grid>
+      <div className={classes.snack}>
+        <Snackbar open={open} onClose={handleClose} anchorOrigin={{ vertical: "bottom", horizontal: "right" }}>
+          <Alert onClose={handleClose} severity="warning">
+            The Steam Spy API seems to be having issues. Some data may not display or load correctly.
+          </Alert>
+        </Snackbar>
+      </div>
     </div>
   );
 }
