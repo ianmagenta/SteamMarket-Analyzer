@@ -19,7 +19,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import "../index.css";
 import logo from "../images/SMA-logo2.svg";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
-import { Link, Route } from "react-router-dom";
+import { Link, Route, Switch } from "react-router-dom";
 import BarChartIcon from "@material-ui/icons/BarChart";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 import { useHistory } from "react-router-dom";
@@ -29,6 +29,8 @@ import Snapshot from "./Snapshot";
 import About from "./About";
 import Analysis from "./Analysis";
 import Search from "./Search";
+import Game from "./Game";
+import NotFound from "./NotFound";
 
 const drawerWidth = 240;
 
@@ -162,7 +164,7 @@ function ResponsiveDrawer(props) {
       if (mobileOpen) {
         setMobileOpen(false);
       }
-      history.push(`/search/${e.target.value}`);
+      history.push(`/search/${encodeURIComponent(e.target.value)}`);
       e.target.value = "";
       e.target.blur();
     }
@@ -267,10 +269,14 @@ function ResponsiveDrawer(props) {
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Route exact path="/snapshot" component={Snapshot} />
-        <Route exact path="/analysis" component={Analysis} />
-        <Route exact path="/about" component={About} />
-        <Route path="/search/:queryString" component={Search} />
+        <Switch>
+          <Route exact path="/snapshot" component={Snapshot} />
+          <Route exact path="/analysis" component={Analysis} />
+          <Route exact path="/about" component={About} />
+          <Route exact path="/search/:queryString" component={Search} />
+          <Route exact path="/game/:appid" component={Game} />
+          <Route component={NotFound} />
+        </Switch>
       </main>
     </div>
   );

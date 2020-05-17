@@ -48,7 +48,6 @@ const bannedWordList = [
   "the",
   "to",
   "#",
-  "!",
   "@",
   "'",
   '"',
@@ -71,13 +70,15 @@ const bannedWordList = [
   "/",
   "`",
   "~",
+  "\\",
 ];
 
 export default function FullWidthGrid(props) {
-  const queryString = props.match.params.queryString;
+  const queryString = decodeURIComponent(props.match.params.queryString);
   const classes = useStyles();
   const [searchResults, setSearchResults] = useState([]);
   const [open, setOpen] = React.useState(false);
+  const [finishedSearch, setFinishedSearch] = useState(false);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -131,6 +132,7 @@ export default function FullWidthGrid(props) {
     };
 
     fetchData();
+    setFinishedSearch(true);
 
     return () => {
       abortController.abort();
@@ -143,7 +145,7 @@ export default function FullWidthGrid(props) {
         <Grid item xs={12} sm={12}>
           <Card>
             <CardContent>
-              {searchResults.length > 0 ? (
+              {finishedSearch ? (
                 <>
                   <Typography variant="h6" align="center">
                     Search Results
@@ -160,7 +162,7 @@ export default function FullWidthGrid(props) {
             </CardContent>
           </Card>
         </Grid>
-        {searchResults.length > 0 ? (
+        {searchResults.length > 0 && finishedSearch ? (
           <>
             {searchResults.map((result) => (
               <Grid item xs={12} sm={6} lg={3} xl={2} key={result.appid}>
@@ -185,7 +187,13 @@ export default function FullWidthGrid(props) {
             ))}
           </>
         ) : (
-          <></>
+          <Grid item xs={12} sm={12}>
+            <Card>
+              <CardContent>
+                <Typography align="center">No Results Found for "{queryString}"</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
         )}
       </Grid>
       <div className={classes.snack}>
