@@ -235,7 +235,7 @@ export default function FullWidthGrid() {
         const response = await fetch("/api/top100in2weeks");
         const data = await response.json();
         const dataKeys = Object.keys(data);
-        if (dataKeys.length === 0 || !response.ok) {
+        if (data === "Connection failed: Too many connections" || dataKeys.length === 0 || !response.ok) {
           setOpen(true);
           return;
         }

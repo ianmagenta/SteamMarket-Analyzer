@@ -41,7 +41,7 @@ router.get("/:params", async function (req, res, next) {
     const data = await response.json();
     res.json(data);
   } catch (err) {
-    console.log(err);
+    res.json("Connection failed: Too many connections");
   }
 });
 

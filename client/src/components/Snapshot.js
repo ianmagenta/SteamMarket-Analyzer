@@ -110,7 +110,7 @@ export default function Snapshot() {
       try {
         const response = await fetch("/api/text/top100in2weeks", { signal: signal });
         const data = await response.text();
-        if (data === "{}" || !response.ok) {
+        if (data === "Connection failed: Too many connections" || data === "{}" || !response.ok) {
           setOpen(true);
           return;
         }

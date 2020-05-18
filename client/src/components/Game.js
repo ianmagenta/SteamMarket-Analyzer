@@ -11,6 +11,11 @@ import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import Alert from "@material-ui/lab/Alert";
 import Box from "@material-ui/core/Box";
 import Chart from "./Chart";
+import Snackbar from "@material-ui/core/Snackbar";
+
+function ApiAlert(props) {
+  return <Alert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,6 +50,12 @@ const useStyles = makeStyles((theme) => ({
   alert: {
     backgroundColor: "#1976d2",
   },
+  snack: {
+    width: "100%",
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
+  },
 }));
 
 export default function FullWidthGrid(props) {
@@ -58,6 +69,14 @@ export default function FullWidthGrid(props) {
   const [prices, setPrices] = useState([0, 0]);
   const [reviewScores, setReviewScores] = useState([0, 0]);
   const [tags, setTags] = useState([["None"], [0]]);
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -66,13 +85,13 @@ export default function FullWidthGrid(props) {
       try {
         const response = await fetch(`/api/appdetails&appid=${appid}`, { signal: signal });
         const data = await response.json();
+        if (data === "Connection failed: Too many connections" || data === "{}" || !response.ok) {
+          setOpen(true);
+          return;
+        }
         if (data.name === null || data.developer === "" || isNaN(parseInt(appid, 10))) {
           setGameFound(false);
           return;
-        }
-        if (data === "{}" || !response.ok) {
-          // setOpen(true);
-          // return;
         }
         console.log(data);
         setDeveloper(data.developer);
@@ -170,6 +189,7 @@ export default function FullWidthGrid(props) {
                     categories={["Base Price", "Current Price"]}
                     data={prices}
                     pal="palette6"
+                    colors={["#43BCCD"]}
                   />
                 </CardContent>
               </Card>
@@ -193,11 +213,26 @@ export default function FullWidthGrid(props) {
               <Card>
                 <CardContent>
                   <Typography variant="h6">Tags By Votes</Typography>
-                  <Chart labels="" type="bar" name="" categories={tags[0]} data={tags[1]} pal="palette5" />
+                  <Chart
+                    colors={["#F9C80E"]}
+                    labels=""
+                    type="bar"
+                    name=""
+                    categories={tags[0]}
+                    data={tags[1]}
+                    pal="palette5"
+                  />
                 </CardContent>
               </Card>
             </Grid>
           </Grid>
+          <div className={classes.snack}>
+            <Snackbar open={open} onClose={handleClose} anchorOrigin={{ vertical: "bottom", horizontal: "right" }}>
+              <ApiAlert onClose={handleClose} severity="warning">
+                The Steam Spy API seems to be having issues. Some data may not display or load correctly.
+              </ApiAlert>
+            </Snackbar>
+          </div>
         </div>
       )}
     </>

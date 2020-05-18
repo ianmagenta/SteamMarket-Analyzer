@@ -9,6 +9,7 @@ import ListItem from "@material-ui/core/ListItem";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+import ErrorImage from "../images/testapp.svg";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -96,7 +97,7 @@ export default function FullWidthGrid(props) {
         const response = await fetch("/api/all", { signal: signal });
         const data = await response.json();
         const values = Object.values(data);
-        if (values.length === 0 || !response.ok) {
+        if (data === "Connection failed: Too many connections" || values.length === 0 || !response.ok) {
           setOpen(true);
           return;
         }
@@ -189,6 +190,7 @@ export default function FullWidthGrid(props) {
                         className={classes.listImage}
                         src={`https://steamcdn-a.akamaihd.net/steam/apps/${result.appid}/header.jpg?t=1568751918`}
                         alt={result.name}
+                        onError={(e) => (e.target.src = ErrorImage)}
                       />
                     </ListItem>
                   </CardActionArea>

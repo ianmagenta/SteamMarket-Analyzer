@@ -32,6 +32,7 @@ class App extends Component {
             format: this.props.tooltipFormat,
           },
         },
+        colors: this.props.colors,
       },
       series: [
         {
