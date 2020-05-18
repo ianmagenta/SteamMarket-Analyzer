@@ -197,7 +197,7 @@ export default function FullWidthGrid(props) {
             <Grid item xs={12} sm={6}>
               <Card>
                 <CardContent>
-                  <Typography variant="h6">Review Sores - Net Positive {reviewScores[0] - reviewScores[1]}</Typography>
+                  <Typography variant="h6">Review Scores - Net Positive {reviewScores[0] - reviewScores[1]}</Typography>
                   <Chart
                     labels=""
                     type="bar"
